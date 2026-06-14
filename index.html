@@ -1,13 +1,591 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>aql-app</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ESME Consumer Finished Goods AQL Inspection Portal</title>
+  <!-- Tabler Icons CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <!-- Google Fonts Inter -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+  <style>
+  :root {
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    
+    /* Premium Modern HSL Colors */
+    --color-background-primary: #ffffff;
+    --color-background-secondary: #f8fafc;
+    --color-background-tertiary: #f1f5f9;
+    --color-background-info: #eff6ff;
+    
+    --color-border-secondary: #cbd5e1;
+    --color-border-tertiary: #e2e8f0;
+    --color-border-info: #bfdbfe;
+    
+    --color-text-primary: #0f172a;
+    --color-text-secondary: #475569;
+    --color-text-tertiary: #94a3b8;
+    --color-text-info: #1d4ed8;
+    
+    --border-radius-md: 8px;
+    --border-radius-lg: 16px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-background-primary: #0f172a;
+      --color-background-secondary: #1e293b;
+      --color-background-tertiary: #0b0f19;
+      --color-background-info: #1e3a8a;
+      
+      --color-border-secondary: #334155;
+      --color-border-tertiary: #1e293b;
+      --color-border-info: #172554;
+      
+      --color-text-primary: #f8fafc;
+      --color-text-secondary: #cbd5e1;
+      --color-text-tertiary: #64748b;
+      --color-text-info: #93c5fd;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--color-background-tertiary);
+    margin: 0;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+.app{position:relative;width:100%;max-width:420px;margin:0 auto;min-height:600px;display:flex;flex-direction:column;background:var(--color-background-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;border:0.5px solid var(--color-border-tertiary)}
+.screen{flex:1;overflow-y:auto;padding-bottom:64px}
+.topbar{background:var(--color-background-primary);border-bottom:0.5px solid var(--color-border-tertiary);padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+.topbar-title{font-size:15px;font-weight:500;color:var(--color-text-primary)}
+.topbar-sub{font-size:11px;color:var(--color-text-secondary)}
+.avatar{width:32px;height:32px;border-radius:50%;background:#E6F1FB;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:#185FA5;cursor:pointer}
+.navbar{position:absolute;bottom:0;left:0;right:0;background:var(--color-background-primary);border-top:0.5px solid var(--color-border-tertiary);display:grid;grid-template-columns:repeat(3,1fr);padding:4px 0 8px}
+.nav-btn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0;cursor:pointer;border:none;background:transparent;font-size:10px;color:var(--color-text-tertiary);transition:color 0.15s}
+.nav-btn.active{color:#185FA5}
+.nav-btn i{font-size:20px}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px 16px;margin:12px 12px 0}
+.card:last-child{margin-bottom:12px}
+.badge{display:inline-block;font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:0.04em}
+.badge-accept{background:#EAF3DE;color:#3B6D11}
+.badge-hold{background:#FAEEDA;color:#854F0B}
+.badge-reject{background:#FCEBEB;color:#A32D2D}
+.badge-draft{background:#F1EFE8;color:#5F5E5A}
+.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;padding:12px}
+.stat-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px}
+.stat-label{font-size:11px;color:var(--color-text-secondary);margin-bottom:2px}
+.stat-val{font-size:20px;font-weight:500;color:var(--color-text-primary)}
+.form-group{margin-bottom:14px}
+.form-label{font-size:12px;color:var(--color-text-secondary);margin-bottom:4px;display:block}
+.form-input{width:100%;padding:8px 10px;font-size:13px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);outline:none}
+.form-input:focus{border-color:#378ADD}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.section-title{font-size:12px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:0.06em;padding:12px 12px 6px;border-top:0.5px solid var(--color-border-tertiary);margin-top:8px}
+.defect-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.defect-label{font-size:12px;color:var(--color-text-primary);flex:1}
+.defect-counter{display:flex;align-items:center;gap:6px}
+.counter-btn{width:28px;height:28px;border-radius:50%;border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1}
+.counter-val{font-size:14px;font-weight:500;min-width:24px;text-align:center;color:var(--color-text-primary)}
+.decision-banner{margin:12px;padding:14px 16px;border-radius:var(--border-radius-lg);text-align:center}
+.decision-banner.accept{background:#EAF3DE;border:1px solid #C0DD97}
+.decision-banner.hold{background:#FAEEDA;border:1px solid #FAC775}
+.decision-banner.reject{background:#FCEBEB;border:1px solid #F7C1C1}
+.decision-label{font-size:11px;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:2px}
+.decision-label.accept{color:#3B6D11}
+.decision-label.hold{color:#854F0B}
+.decision-label.reject{color:#A32D2D}
+.decision-value{font-size:22px;font-weight:500}
+.decision-value.accept{color:#27500A}
+.decision-value.hold{color:#633806}
+.decision-value.reject{color:#791F1F}
+.pct-row{display:flex;justify-content:space-between;font-size:11px;color:var(--color-text-secondary);padding:2px 0}
+.pct-val{font-weight:500;color:var(--color-text-primary)}
+.pct-val.over{color:#A32D2D}
+.btn-primary{width:100%;padding:11px;background:#185FA5;color:#fff;border:none;border-radius:var(--border-radius-md);font-size:13px;font-weight:500;cursor:pointer;margin-top:4px}
+.btn-secondary{width:100%;padding:11px;background:transparent;color:var(--color-text-secondary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:13px;cursor:pointer;margin-top:8px}
+.btn-primary:active,.btn-secondary:active{transform:scale(0.98)}
+.login-wrap{padding:32px 20px}
+.login-logo{text-align:center;margin-bottom:28px}
+.login-logo-icon{width:56px;height:56px;background:#E6F1FB;border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;font-size:28px;color:#185FA5}
+.login-logo-name{font-size:18px;font-weight:500;color:var(--color-text-primary)}
+.login-logo-sub{font-size:12px;color:var(--color-text-secondary)}
+.login-hint{font-size:11px;color:var(--color-text-tertiary);text-align:center;margin-top:16px;line-height:1.6}
+.history-item{display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:10px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.history-item:last-child{border-bottom:none}
+.history-prod{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+.history-meta{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+.sample-info{background:var(--color-background-info);border:0.5px solid var(--color-border-info);border-radius:var(--border-radius-md);padding:8px 12px;font-size:12px;color:var(--color-text-info);margin-top:8px}
+.back-btn{background:transparent;border:none;color:var(--color-text-secondary);cursor:pointer;font-size:13px;display:flex;align-items:center;gap:4px}
+.aql-limit-row{display:flex;justify-content:space-between;font-size:12px;padding:3px 0;color:var(--color-text-secondary)}
+.aql-limit-row span:last-child{font-weight:500;color:var(--color-text-primary)}
+</style>
+
+<h2 class="sr-only">AQL Finished Goods Inspection App for Esme Consumer Pvt. Ltd.</h2>
+
+<div class="app" id="app">
+  <div id="screen-login" class="screen" style="padding-bottom:0">
+    <div class="login-wrap">
+      <div class="login-logo">
+        <div class="login-logo-icon"><i class="ti ti-clipboard-check" aria-hidden="true"></i></div>
+        <div class="login-logo-name">ESME QA Portal</div>
+        <div class="login-logo-sub">AQL Inspection System</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Employee ID</label>
+        <input class="form-input" id="login-empid" placeholder="e.g. EMP001" value="EMP001">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" type="password" id="login-pass" placeholder="Any password in demo mode" value="demo">
+      </div>
+      <button class="btn-primary" onclick="doLogin()">Sign In</button>
+      <div class="login-hint">Demo accounts: EMP001 (Amit Sharma, QA Executive)<br>EMP002 (Priyanka Patel, QA Manager)</div>
+    </div>
+  </div>
+
+  <div id="screen-main" class="screen" style="display:none">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title" id="topbar-title">Dashboard</div>
+        <div class="topbar-sub" id="topbar-sub">Esme Consumer Pvt. Ltd.</div>
+      </div>
+      <div class="avatar" id="user-avatar" onclick="doLogout()" title="Tap to logout">AS</div>
+    </div>
+
+    <div id="tab-dashboard"></div>
+    <div id="tab-new" style="display:none"></div>
+    <div id="tab-history" style="display:none"></div>
+    <div id="tab-form" style="display:none"></div>
+
+    <div class="navbar">
+      <button class="nav-btn active" id="nav-dashboard" onclick="showTab('dashboard')"><i class="ti ti-layout-dashboard" aria-hidden="true"></i>Dashboard</button>
+      <button class="nav-btn" id="nav-new" onclick="showTab('new')"><i class="ti ti-plus-circle" aria-hidden="true"></i>New AQL</button>
+      <button class="nav-btn" id="nav-history" onclick="showTab('history')"><i class="ti ti-history" aria-hidden="true"></i>History</button>
+    </div>
+  </div>
+
+  <div id="screen-form" class="screen" style="display:none;padding-bottom:0"></div>
+</div>
+
+<script>
+const USERS = {
+  EMP001: {name:'Amit Sharma', role:'QA Executive', initials:'AS'},
+  EMP002: {name:'Priyanka Patel', role:'QA Manager', initials:'PP'}
+};
+
+const ISO2859 = [
+  {max:150, code:'F', n:20},
+  {max:280, code:'G', n:32},
+  {max:500, code:'H', n:50},
+  {max:1200, code:'J', n:80},
+  {max:3200, code:'K', n:125},
+  {max:10000, code:'L', n:200},
+  {max:35000, code:'M', n:315},
+  {max:150000, code:'N', n:500},
+  {max:500000, code:'P', n:800},
+  {max:Infinity, code:'Q', n:1250}
+];
+
+const DEFECT_TYPES = {
+  critical: ['Contamination / microbial','Wrong product / mislabelled','Harmful foreign matter','Seal breach (primary)'],
+  major: ['Leaking / broken seal','Wrong shade / color','Incorrect net weight','Label missing or misprint','Cap not closing properly'],
+  minor: ['Minor cosmetic damage','Slight label offset','Minor dent on packaging','Print smudge on carton','Quantity short in shipper']
+};
+
+let currentUser = null;
+let inspections = JSON.parse(localStorage.getItem('esme_insp') || '[]');
+let formData = {};
+let defectCounts = {};
+
+function save() {
+  localStorage.setItem('esme_insp', JSON.stringify(inspections));
+}
+
+function getSample(batchSize) {
+  const row = ISO2859.find(r => batchSize <= r.max);
+  return row || ISO2859[ISO2859.length-1];
+}
+
+function calcDecision(counts, sampleSize) {
+  const crit = Object.values(counts.critical||{}).reduce((a,b)=>a+b,0);
+  const maj = Object.values(counts.major||{}).reduce((a,b)=>a+b,0);
+  const min = Object.values(counts.minor||{}).reduce((a,b)=>a+b,0);
+  const majPct = sampleSize ? (maj/sampleSize*100) : 0;
+  const minPct = sampleSize ? (min/sampleSize*100) : 0;
+  let decision = 'ACCEPT';
+  if (crit > 0) decision = 'REJECT';
+  else if (majPct > 1 || minPct > 4) decision = 'HOLD';
+  return {decision, crit, maj, min, majPct, minPct};
+}
+
+function doLogin() {
+  const id = document.getElementById('login-empid').value.trim().toUpperCase();
+  const user = USERS[id];
+  if (!user) { alert('Employee ID not found. Try EMP001 or EMP002.'); return; }
+  currentUser = {id, ...user};
+  document.getElementById('user-avatar').textContent = user.initials;
+  document.getElementById('screen-login').style.display = 'none';
+  document.getElementById('screen-main').style.display = 'flex';
+  document.getElementById('screen-main').style.flexDirection = 'column';
+  showTab('dashboard');
+}
+
+function doLogout() {
+  if (!confirm('Sign out?')) return;
+  currentUser = null;
+  document.getElementById('screen-login').style.display = 'block';
+  document.getElementById('screen-main').style.display = 'none';
+  document.getElementById('screen-form').style.display = 'none';
+}
+
+function showTab(tab) {
+  ['dashboard','new','history'].forEach(t => {
+    document.getElementById('tab-'+t).style.display = t===tab ? 'block' : 'none';
+    document.getElementById('nav-'+t).classList.toggle('active', t===tab);
+  });
+  document.getElementById('topbar-title').textContent = tab==='dashboard'?'Dashboard':tab==='new'?'New Inspection':'History';
+  if (tab==='dashboard') renderDashboard();
+  if (tab==='history') renderHistory();
+  if (tab==='new') renderNewPrompt();
+}
+
+function renderDashboard() {
+  const el = document.getElementById('tab-dashboard');
+  const total = inspections.length;
+  const submitted = inspections.filter(i=>i.status==='submitted').length;
+  const accepted = inspections.filter(i=>i.overall_decision==='ACCEPT').length;
+  const rejected = inspections.filter(i=>i.overall_decision==='REJECT').length;
+  const drafts = inspections.filter(i=>i.status==='draft');
+
+  let draftHTML = '';
+  if (drafts.length) {
+    draftHTML = `<div class="section-title">Drafts</div>`;
+    drafts.forEach(d => {
+      draftHTML += `<div class="card" style="cursor:pointer" onclick="openForm('${d.id}')">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-size:13px;font-weight:500;color:var(--color-text-primary)">${d.product_name||'Untitled'}</div>
+            <div style="font-size:11px;color:var(--color-text-secondary)">Batch: ${d.batch_no||'—'} · ${d.created_at?new Date(d.created_at).toLocaleDateString('en-GB',{day:'2-digit',month:'short'}):'—'}</div>
+          </div>
+          <span class="badge badge-draft">Draft</span>
+        </div>
+      </div>`;
+    });
+  }
+
+  el.innerHTML = `
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-label">Total Inspections</div><div class="stat-val">${total}</div></div>
+      <div class="stat-card"><div class="stat-label">Submitted</div><div class="stat-val">${submitted}</div></div>
+      <div class="stat-card"><div class="stat-label">Accepted</div><div class="stat-val" style="color:#27500A">${accepted}</div></div>
+      <div class="stat-card"><div class="stat-label">Rejected</div><div class="stat-val" style="color:#791F1F">${rejected}</div></div>
+    </div>
+    ${draftHTML}
+    <div class="card" style="text-align:center;padding:18px">
+      <i class="ti ti-plus-circle" style="font-size:32px;color:#378ADD" aria-hidden="true"></i>
+      <div style="font-size:13px;font-weight:500;margin:8px 0 4px;color:var(--color-text-primary)">Start AQL Inspection</div>
+      <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:12px">ISO 2859-1 · ESME-QA-SOP-22-F-02</div>
+      <button class="btn-primary" onclick="openForm(null)">Begin New Session</button>
+    </div>`;
+}
+
+function renderNewPrompt() {
+  document.getElementById('tab-new').innerHTML = `
+    <div style="padding:20px">
+      <div class="card" style="text-align:center;padding:24px">
+        <i class="ti ti-clipboard-list" style="font-size:36px;color:#378ADD" aria-hidden="true"></i>
+        <div style="font-size:14px;font-weight:500;margin:10px 0 6px;color:var(--color-text-primary)">New AQL Inspection</div>
+        <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:16px;line-height:1.6">
+          ISO 2859-1 sample sizes auto-calculated.<br>Critical 0% · Major 1% · Minor 4%
+        </div>
+        <button class="btn-primary" onclick="openForm(null)">Start New Session</button>
+      </div>
+      <div class="card" style="margin-top:0">
+        <div style="font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:8px">AQL Decision Rules</div>
+        <div class="aql-limit-row"><span>Critical defects</span><span>= 0% (any = REJECT)</span></div>
+        <div class="aql-limit-row"><span>Major defects</span><span>&gt; 1% = HOLD</span></div>
+        <div class="aql-limit-row"><span>Minor defects</span><span>&gt; 4% = HOLD</span></div>
+        <div style="border-top:0.5px solid var(--color-border-tertiary);margin-top:8px;padding-top:8px;font-size:11px;color:var(--color-text-secondary)">
+          General Inspection Level II per ISO 2859-1
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderHistory() {
+  const el = document.getElementById('tab-history');
+  const submitted = inspections.filter(i=>i.status==='submitted').sort((a,b)=>new Date(b.submitted_at)-new Date(a.submitted_at));
+  if (!submitted.length) {
+    el.innerHTML = `<div style="padding:40px 20px;text-align:center;color:var(--color-text-tertiary)">
+      <i class="ti ti-history" style="font-size:36px" aria-hidden="true"></i>
+      <div style="font-size:13px;margin-top:8px">No submitted inspections yet</div>
+    </div>`;
+    return;
+  }
+  let html = '<div class="card">';
+  submitted.forEach(item => {
+    const dec = item.overall_decision||'HOLD';
+    html += `<div class="history-item" onclick="viewSubmitted('${item.id}')">
+      <div>
+        <div class="history-prod">${item.product_name}</div>
+        <div class="history-meta">Batch ${item.batch_no} · ${new Date(item.submitted_at).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <span class="badge badge-${dec.toLowerCase()}">${dec}</span>
+        <i class="ti ti-chevron-right" style="color:var(--color-text-tertiary)" aria-hidden="true"></i>
+      </div>
+    </div>`;
+  });
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+function openForm(id) {
+  formData = {};
+  defectCounts = {critical:{},major:{},minor:{}};
+  if (id) {
+    const found = inspections.find(i=>i.id===id);
+    if (found) {
+      formData = {...found};
+      defectCounts = JSON.parse(JSON.stringify(found.defect_counts||{critical:{},major:{},minor:{}}));
+    }
+  } else {
+    formData = {
+      id: 'INS_'+Date.now(),
+      status: 'draft',
+      created_at: new Date().toISOString(),
+      created_by: currentUser.id
+    };
+  }
+  document.getElementById('screen-main').style.display = 'none';
+  document.getElementById('screen-form').style.display = 'flex';
+  document.getElementById('screen-form').style.flexDirection = 'column';
+  renderForm(false);
+}
+
+function viewSubmitted(id) {
+  const found = inspections.find(i=>i.id===id);
+  if (!found) return;
+  formData = {...found};
+  defectCounts = JSON.parse(JSON.stringify(found.defect_counts||{critical:{},major:{},minor:{}}));
+  document.getElementById('screen-main').style.display = 'none';
+  document.getElementById('screen-form').style.display = 'flex';
+  document.getElementById('screen-form').style.flexDirection = 'column';
+  renderForm(true);
+}
+
+function closeForm() {
+  document.getElementById('screen-form').style.display = 'none';
+  document.getElementById('screen-main').style.display = 'flex';
+  showTab('dashboard');
+}
+
+function renderForm(readonly) {
+  const el = document.getElementById('screen-form');
+  const sampleInfo = formData.batch_size ? getSample(Number(formData.batch_size)) : null;
+  const sampleSize = sampleInfo ? sampleInfo.n : null;
+  const result = sampleSize ? calcDecision(defectCounts, sampleSize) : null;
+
+  let defHTML = '';
+  ['critical','major','minor'].forEach(cat => {
+    const label = cat.charAt(0).toUpperCase()+cat.slice(1);
+    defHTML += `<div class="section-title">${label} Defects ${cat==='critical'?'(AQL = 0%)':cat==='major'?'(AQL ≤ 1%)':'(AQL ≤ 4%)'}</div><div style="padding:0 12px">`;
+    DEFECT_TYPES[cat].forEach((d,i) => {
+      const count = defectCounts[cat][i]||0;
+      defHTML += `<div class="defect-row">
+        <div class="defect-label">${d}</div>
+        <div class="defect-counter">
+          ${!readonly?`<button class="counter-btn" onclick="changeCount('${cat}',${i},-1)">−</button>`:''}
+          <span class="counter-val" id="cnt-${cat}-${i}">${count}</span>
+          ${!readonly?`<button class="counter-btn" onclick="changeCount('${cat}',${i},1)">+</button>`:''}
+        </div>
+      </div>`;
+    });
+    defHTML += '</div>';
+  });
+
+  let decHTML = '';
+  if (result) {
+    const cls = result.decision.toLowerCase();
+    const majOver = result.majPct > 1;
+    const minOver = result.minPct > 4;
+    decHTML = `<div class="decision-banner ${cls}">
+      <div class="decision-label ${cls}">Batch Decision</div>
+      <div class="decision-value ${cls}">${result.decision}</div>
+    </div>
+    <div style="padding:0 12px 4px">
+      <div class="pct-row"><span>Critical defects</span><span class="pct-val ${result.crit>0?'over':''}">${result.crit} unit${result.crit!==1?'s':''} (limit: 0)</span></div>
+      <div class="pct-row"><span>Major defects</span><span class="pct-val ${majOver?'over':''}">${result.majPct.toFixed(2)}% (limit: 1%)</span></div>
+      <div class="pct-row"><span>Minor defects</span><span class="pct-val ${minOver?'over':''}">${result.minPct.toFixed(2)}% (limit: 4%)</span></div>
+    </div>`;
+  }
+
+  const submitBtns = readonly ? `
+    <div style="padding:12px">
+      <button class="btn-secondary" onclick="closeForm()"><i class="ti ti-arrow-left" aria-hidden="true"></i> Back to Dashboard</button>
+    </div>` : `
+    <div style="padding:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <button class="btn-secondary" onclick="saveDraft()">Save Draft</button>
+      <button class="btn-primary" onclick="submitForm()" ${!sampleSize?'disabled style="opacity:0.5"':''}>Submit Report</button>
+    </div>
+    <div style="padding:0 12px 16px">
+      <button class="btn-secondary" onclick="closeForm()">Cancel</button>
+    </div>`;
+
+  el.innerHTML = `
+    <div class="topbar">
+      <div>
+        <button class="back-btn" onclick="closeForm()"><i class="ti ti-arrow-left" aria-hidden="true"></i> ${readonly?'View Report':'Inspection Form'}</button>
+        <div class="topbar-sub">${readonly?'Read-only · Submitted':'ESME-QA-SOP-22-F-02'}</div>
+      </div>
+      <span class="badge ${readonly?'badge-'+((formData.overall_decision||'hold').toLowerCase()):'badge-draft'}">${readonly?(formData.overall_decision||'HOLD'):'DRAFT'}</span>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding-bottom:20px">
+      <div style="padding:12px">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Product Name*</label>
+            <input class="form-input" id="f-product" value="${formData.product_name||''}" placeholder="e.g. Moisturiser 50ml" ${readonly?'readonly':''}  oninput="fd('product_name',this.value)">
+          </div>
+          <div class="form-group">
+            <label class="form-label">SKU</label>
+            <input class="form-input" id="f-sku" value="${formData.sku||''}" placeholder="SKU code" ${readonly?'readonly':''} oninput="fd('sku',this.value)">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Batch No.*</label>
+            <input class="form-input" id="f-batch" value="${formData.batch_no||''}" placeholder="BN-XXXXX" ${readonly?'readonly':''} oninput="fd('batch_no',this.value)">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Batch Size*</label>
+            <input class="form-input" type="number" id="f-batchsize" value="${formData.batch_size||''}" placeholder="e.g. 5000" ${readonly?'readonly':''} oninput="fd('batch_size',this.value);updateSample(this.value)">
+          </div>
+        </div>
+        ${sampleInfo ? `<div class="sample-info"><i class="ti ti-info-circle" aria-hidden="true"></i> ISO 2859-1 Level II · Letter <strong>${sampleInfo.code}</strong> · Sample size: <strong>${sampleInfo.n} units</strong></div>` : ''}
+        <div class="form-row" style="margin-top:10px">
+          <div class="form-group">
+            <label class="form-label">Mfg Date</label>
+            <input class="form-input" type="date" id="f-mfd" value="${formData.mfd_date||''}" ${readonly?'readonly':''} oninput="fd('mfd_date',this.value)">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Exp Date</label>
+            <input class="form-input" type="date" id="f-exp" value="${formData.exp_date||''}" ${readonly?'readonly':''} oninput="fd('exp_date',this.value)">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Inspector</label>
+          <input class="form-input" value="${currentUser.name} (${currentUser.id})" readonly>
+        </div>
+      </div>
+      ${defHTML}
+      ${decHTML}
+      ${submitBtns}
+    </div>`;
+}
+
+function fd(key, val) { formData[key] = val; }
+
+function updateSample(val) {
+  const n = Number(val);
+  if (!n) return;
+  const info = getSample(n);
+  const existing = document.querySelector('.sample-info');
+  const target = document.getElementById('f-batchsize')?.closest('.form-row')?.nextElementSibling;
+  if (existing) {
+    existing.innerHTML = `<i class="ti ti-info-circle" aria-hidden="true"></i> ISO 2859-1 Level II · Letter <strong>${info.code}</strong> · Sample size: <strong>${info.n} units</strong>`;
+  }
+  updateDecision(info.n);
+}
+
+function changeCount(cat, idx, delta) {
+  defectCounts[cat][idx] = Math.max(0, (defectCounts[cat][idx]||0) + delta);
+  document.getElementById(`cnt-${cat}-${idx}`).textContent = defectCounts[cat][idx];
+  const n = Number(formData.batch_size);
+  if (n) {
+    const info = getSample(n);
+    updateDecision(info.n);
+  }
+}
+
+function updateDecision(sampleSize) {
+  const result = calcDecision(defectCounts, sampleSize);
+  const cls = result.decision.toLowerCase();
+  let banner = document.querySelector('.decision-banner');
+  if (!banner) {
+    const submitDiv = document.querySelector('[style*="display:grid"]') || document.querySelector('.btn-secondary');
+    if (submitDiv) {
+      const wrapper = document.createElement('div');
+      wrapper.innerHTML = `<div class="decision-banner ${cls}">
+        <div class="decision-label ${cls}">Batch Decision</div>
+        <div class="decision-value ${cls}">${result.decision}</div>
+      </div>
+      <div class="dec-pcts" style="padding:0 12px 4px">
+        <div class="pct-row"><span>Critical defects</span><span class="pct-val ${result.crit>0?'over':''}" id="pct-crit">${result.crit} unit${result.crit!==1?'s':''} (limit: 0)</span></div>
+        <div class="pct-row"><span>Major defects</span><span class="pct-val ${result.majPct>1?'over':''}" id="pct-maj">${result.majPct.toFixed(2)}% (limit: 1%)</span></div>
+        <div class="pct-row"><span>Minor defects</span><span class="pct-val ${result.minPct>4?'over':''}" id="pct-min">${result.minPct.toFixed(2)}% (limit: 4%)</span></div>
+      </div>`;
+      submitDiv.closest('div[style]')?.before(wrapper.firstChild);
+      submitDiv.closest('div[style]')?.before(wrapper.lastChild);
+      return;
+    }
+  }
+  if (banner) {
+    banner.className = `decision-banner ${cls}`;
+    banner.querySelector('.decision-label').className = `decision-label ${cls}`;
+    banner.querySelector('.decision-label').textContent = 'Batch Decision';
+    banner.querySelector('.decision-value').className = `decision-value ${cls}`;
+    banner.querySelector('.decision-value').textContent = result.decision;
+    const critEl = document.getElementById('pct-crit');
+    const majEl = document.getElementById('pct-maj');
+    const minEl = document.getElementById('pct-min');
+    if (critEl) { critEl.textContent = `${result.crit} unit${result.crit!==1?'s':''} (limit: 0)`; critEl.className = `pct-val ${result.crit>0?'over':''}`; }
+    if (majEl) { majEl.textContent = `${result.majPct.toFixed(2)}% (limit: 1%)`; majEl.className = `pct-val ${result.majPct>1?'over':''}`; }
+    if (minEl) { minEl.textContent = `${result.minPct.toFixed(2)}% (limit: 4%)`; minEl.className = `pct-val ${result.minPct>4?'over':''}`; }
+  }
+}
+
+function saveDraft() {
+  formData.status = 'draft';
+  formData.defect_counts = JSON.parse(JSON.stringify(defectCounts));
+  const idx = inspections.findIndex(i=>i.id===formData.id);
+  if (idx>=0) inspections[idx]=formData; else inspections.push({...formData});
+  save();
+  alert('Draft saved.');
+}
+
+function submitForm() {
+  if (!formData.product_name || !formData.batch_no || !formData.batch_size) {
+    alert('Please fill in Product Name, Batch No. and Batch Size before submitting.');
+    return;
+  }
+  const info = getSample(Number(formData.batch_size));
+  const result = calcDecision(defectCounts, info.n);
+  formData.status = 'submitted';
+  formData.submitted_at = new Date().toISOString();
+  formData.overall_decision = result.decision;
+  formData.defect_counts = JSON.parse(JSON.stringify(defectCounts));
+  formData.defect_pct_critical = result.crit;
+  formData.defect_pct_major = parseFloat(result.majPct.toFixed(2));
+  formData.defect_pct_minor = parseFloat(result.minPct.toFixed(2));
+  formData.sample_size = info.n;
+  const idx = inspections.findIndex(i=>i.id===formData.id);
+  if (idx>=0) inspections[idx]={...formData}; else inspections.push({...formData});
+  save();
+  alert(`Inspection submitted.\nDecision: ${result.decision}`);
+  closeForm();
+}
+</script>
+</body>
 </html>
